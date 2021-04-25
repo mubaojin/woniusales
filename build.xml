@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="GB2312"?>
+ 
+<!-- 定义一个工程，默认任务为warFile�?-->
+<project name="woniusales" default="warfile" basedir=".">
+    
+    <!-- 定义属性，打成war包的名称�?-->
+    <property name="warfilename" value="woniusales.war"></property>
+    
+    <!-- 定义路径，编译java文件时用到的jar包�?-->
+    <path id="project.lib">
+        <fileset dir="${basedir}/WebRoot/WEB-INF/lib">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+    
+    <!-- 定义任务，清空任务：清空原有的class文件，创建新的build路径�?-->
+    <target name="clean">
+        <delete dir="${basedir}/WebRoot/WEB-INF/classes" />
+        <mkdir dir="${basedir}/WebRoot/WEB-INF/classes" />
+    </target>
+    
+    <!-- 定义任务，编译src文件夹中的java文件，编译后的class文件放到创建的文件夹下�?-->
+    <target name="compile" depends="clean">
+        <javac srcdir="${basedir}/src" destdir="${basedir}/WebRoot/WEB-INF/classes" includeantruntime="false">
+            <classpath refid="project.lib"></classpath>
+			<compilerarg line="-encoding UTF-8 "/>
+        </javac>
+    </target>
+    
+    <!-- 定义默认任务，将class文件集合成jar包�?-->
+    <target name="warfile" depends="compile">
+        <!-- 删除原有war包�?-->
+        <delete dir="${basedir}/${warfilename}" />
+		<!-- 单独复制db.properties文件 -->
+		<copy todir="${basedir}/WebRoot/WEB-INF/classes" file="${basedir}/src/db.properties"/>
+        <!-- 建立新war包�?-->
+        <war destfile="${basedir}/${warfilename}" webxml="${basedir}/WebRoot/WEB-INF/web.xml">
+            <!-- 将非jar和非class文件拷贝到war包的对应路径下�?-->
+            <fileset dir="${basedir}/WebRoot">
+                <include name="**/**.*" />
+                <exclude name="**/*.jar"/>
+                <exclude name="**/*.class"/>
+            </fileset>
+            <!-- 将jar和class文件拷贝到war包的对应路径下�?-->
+            <lib dir="${basedir}/WebRoot/WEB-INF/lib" />
+            <classes dir="${basedir}/WebRoot/WEB-INF/classes" />
+        </war>
+    </target>
+    
+</project>
