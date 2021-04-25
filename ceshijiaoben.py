@@ -1,5 +1,5 @@
 from selenium import webdriver
-#1
+#
 
 driver = webdriver.Chrome()
 driver.get('http://121.5.205.252:8050/woniusales/')
